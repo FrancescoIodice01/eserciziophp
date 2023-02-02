@@ -1,3 +1,38 @@
+<?php
+session_start();
+
+$host = "localhost";
+$username = "Francesco";
+$password = "1234";
+$db_name = "esercizio";
+
+$conn = mysqli_connect($host, $username, $password, $db_name);
+
+if (!$conn) {
+    die("Connessione fallita: " . mysqli_connect_error());
+}
+
+if (isset($_POST['nickname']) && isset($_POST['passwd'])) {
+  $nickname = $_POST['nickname'];
+  $passwd = $_POST['passwd'];
+
+  $query = "SELECT * FROM utenti WHERE nickname='$nickname' AND passwd='$passwd'";
+  $result = mysqli_query($conn, $query);
+  
+  if (mysqli_num_rows($result) > 0) {
+    $_SESSION['logged_in'] = true;
+    $_SESSION['nickname'] = $nickname;
+    header("Location: home.php");
+    exit;
+  } else {
+    echo "Nickname o password non corretti, riprova";
+  }
+}
+
+mysqli_close($conn);
+?>
+
+
 <html>
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -12,12 +47,12 @@
       <h5 class="card-title text-center">Login</h5>
       <form action="home.php" method="post">
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" class="form-control" id="email" name="email" required>
+          <label for="nickname">Nickname</label>
+          <input type="nickname" class="form-control" id="nickname" name="nickname" required>
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" id="password" name="password" required>
+          <label for="passwd">Password</label>
+          <input type="passwd" class="form-control" id="passwd" name="passwd" required>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
         <a href="reset-password.php" class="btn btn-link">Password Dimenticata?</a>
@@ -29,9 +64,3 @@
 
   </body>
 </html>
-
-
-
-
-
-
